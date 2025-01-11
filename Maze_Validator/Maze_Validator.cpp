@@ -164,6 +164,49 @@ void solveMazeAStar(vector<vector<char>>& maze, int startX, int startY, int endX
     cout << "No solution found for the maze!\n";
 }
 
+void updatePlayerPosition(vector<vector<char>>& maze, int& playerX, int& playerY, int newX, int newY, int& moves) {
+    maze[playerX][playerY] = '0'; // Reset current position to path
+    playerX = newX;
+    playerY = newY;
+    maze[playerX][playerY] = 'P'; // Mark new position
+    moves++; // Increment move count
+
+    system("cls"); // Clear console (use "clear" on Unix-like systems)
+    printMaze(maze);
+    cout << "Moves made: " << moves << endl;
+}
+
+void validatePath(vector<vector<char>>& maze, int& playerX, int& playerY, int endX, int endY, int& moves) {
+    cout << "Enter your moves (W: up, A: left, S: down, D: right). Enter Q to stop: ";
+    char move;
+    while (cin >> move) {
+        move = tolower(move); // Normalize input to lowercase
+        if (move == 'q') break;
+
+        int newX = playerX, newY = playerY;
+        switch (move) {
+        case 'w': newX--; break; // Up
+        case 'a': newY--; break; // Left
+        case 's': newX++; break; // Down
+        case 'd': newY++; break; // Right
+        default:
+            cout << "Invalid input! Use W/A/S/D to move or Q to quit.\n";
+            continue;
+        }
+
+        if (newX >= 0 && newX < maze.size() && newY >= 0 && newY < maze[0].size() && maze[newX][newY] != '1') {
+            updatePlayerPosition(maze, playerX, playerY, newX, newY, moves);
+            if (playerX == endX && playerY == endY) {
+                cout << "\nCongratulations! You've successfully reached the end in " << moves << " moves!\n";
+                break;
+            }
+        }
+        else {
+            cout << "Invalid move: Wall or boundary ahead!\n";
+        }
+    }
+}
+
 int main()
 {
 
