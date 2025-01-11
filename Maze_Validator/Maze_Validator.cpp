@@ -93,6 +93,31 @@ bool solveMazeForValidation(vector<vector<char>>& maze, int startX, int startY, 
     return false; // No valid path found
 }
 
+void generateMaze(vector<vector<char>>& maze, int rows, int cols, int& startX, int& startY, int& endX, int& endY) {
+    do {
+        maze = vector<vector<char>>(rows, vector<char>(cols, '0')); // Initialize with paths
+        srand(time(nullptr));
+
+        // Add random walls
+        for (int i = 0; i < rows; ++i) {
+            for (int j = 0; j < cols; ++j) {
+                if (rand() % 4 == 0) { // 25% chance to place a wall
+                    maze[i][j] = '1';
+                }
+            }
+        }
+
+        // Place start ('P') and end ('E')
+        startX = rand() % rows;
+        startY = rand() % cols;
+        endX = rand() % rows;
+        endY = rand() % cols;
+
+        maze[startX][startY] = 'P'; // Starting position
+        maze[endX][endY] = 'E';     // Ending position
+    } while (!solveMazeForValidation(maze, startX, startY, endX, endY));
+}
+
 int main()
 {
 
