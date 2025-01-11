@@ -207,7 +207,101 @@ void validatePath(vector<vector<char>>& maze, int& playerX, int& playerY, int en
     }
 }
 
-int main()
-{
+int main() {
+    vector<vector<char>> maze;
+    int rows = 10, cols = 10; // Default dimensions
+    int startX, startY, endX, endY;
+    int playerX, playerY;
+    int moves = 0;
 
+    while (true) {
+        generateMaze(maze, rows, cols, startX, startY, endX, endY);
+
+        playerX = startX;
+        playerY = startY;
+
+        int choice;
+        do {
+            system("cls");
+            cout << "--- Maze Path Validator ---\n\n";
+            printMaze(maze);
+            cout << "\n1. Generate new maze\n";
+            cout << "2. Change maze size\n";
+            cout << "3. Start maze\n";
+            cout << "4. Solve automatically\n";
+            cout << "5. Quit\n";
+            cout << "Enter your choice: ";
+
+            if (!(cin >> choice)) {
+                cin.clear(); // Clear error flag
+                cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Discard invalid input
+                cout << "Invalid input! Please enter a number.\n";
+                continue;
+            }
+
+            switch (choice) {
+            case 1:
+                generateMaze(maze, rows, cols, startX, startY, endX, endY);
+                playerX = startX;
+                playerY = startY;
+                moves = 0;
+                break;
+            case 2:
+                cout << "Enter new dimensions (max " << MAX_DIM << "x" << MAX_DIM << "): ";
+                if (!(cin >> rows >> cols) || rows <= 0 || cols <= 0) {
+                    cin.clear(); // Clear error flag
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Discard invalid input
+                    cout << "Invalid dimensions! Please enter positive integers.\n";
+                    rows = 10; cols = 10; // Reset to default
+                    break;
+                }
+                rows = min(rows, MAX_DIM);
+                cols = min(cols, MAX_DIM);
+                generateMaze(maze, rows, cols, startX, startY, endX, endY);
+                playerX = startX;
+                playerY = startY;
+                moves = 0;
+                break;
+            case 3:
+                validatePath(maze, playerX, playerY, endX, endY, moves);
+                if (playerX == endX && playerY == endY) {
+                    generateMaze(maze, rows, cols, startX, startY, endX, endY);
+                    playerX = startX;
+                    playerY = startY;
+                    moves = 0;
+                    char playAgain;
+                    cout << "\nDo you want to play again? (Y/N): ";
+                    cin >> playAgain;
+                    playAgain = tolower(playAgain);
+                    if (playAgain == 'y') {
+                        choice = 0; // Return to main menu
+                    }
+                    else {
+                        choice = 5; // Exit
+                    }
+                }
+                break;
+            case 4:
+                solveMazeAStar(maze, startX, startY, endX, endY);
+                cout << "Press Enter to return to the main menu...";
+                cin.ignore(); cin.get();
+                generateMaze(maze, rows, cols, startX, startY, endX, endY);
+                playerX = startX;
+                playerY = startY;
+                moves = 0;
+                break;
+                break;
+            case 5:
+                cout << "Goodbye!\n";
+                break;
+            default:
+                cout << "Invalid choice. Please enter a number corresponding to a menu option.\n";
+            }
+
+        } while (choice != 5);
+
+        if (choice == 5) break;
+    }
+
+    return 0;
 }
