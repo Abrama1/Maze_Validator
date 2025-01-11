@@ -118,6 +118,52 @@ void generateMaze(vector<vector<char>>& maze, int rows, int cols, int& startX, i
     } while (!solveMazeForValidation(maze, startX, startY, endX, endY));
 }
 
+void solveMazeAStar(vector<vector<char>>& maze, int startX, int startY, int endX, int endY) {
+    priority_queue<Node, vector<Node>, greater<Node>> openList;
+    vector<vector<bool>> visited(maze.size(), vector<bool>(maze[0].size(), false));
+
+    openList.emplace(startX, startY, 0, heuristic(startX, startY, endX, endY));
+
+    while (!openList.empty()) {
+        Node current = openList.top();
+        openList.pop();
+
+        // If the end is reached
+        if (current.x == endX && current.y == endY) {
+            // Backtrack to mark the path
+            Node* path = &current;
+            while (path->parent != nullptr) {
+                if (maze[path->x][path->y] != 'E') {
+                    maze[path->x][path->y] = '*';
+                }
+                path = path->parent;
+
+                system("cls");
+                printMaze(maze);
+                this_thread::sleep_for(chrono::milliseconds(200));
+            }
+            cout << "\nSolved the maze using A*!\n";
+            return;
+        }
+
+        if (visited[current.x][current.y]) continue;
+        visited[current.x][current.y] = true;
+
+        // Generate neighbors
+        vector<pair<int, int>> directions = { {-1, 0}, {1, 0}, {0, -1}, {0, 1} };
+        for (const auto& [dx, dy] : directions) {
+            int newX = current.x + dx;
+            int newY = current.y + dy;
+
+            if (isValidMove(maze, newX, newY) && !visited[newX][newY]) {
+                openList.emplace(newX, newY, current.g + 1, heuristic(newX, newY, endX, endY), new Node(current));
+            }
+        }
+    }
+
+    cout << "No solution found for the maze!\n";
+}
+
 int main()
 {
 
