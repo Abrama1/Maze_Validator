@@ -39,6 +39,23 @@ void printMaze(const vector<vector<char>>& maze) {
     }
 }
 
+struct Node {
+    int x, y;
+    int g, h; // g = cost from start, h = heuristic cost to end
+    Node* parent;
+
+    Node(int x, int y, int g, int h, Node* parent = nullptr)
+        : x(x), y(y), g(g), h(h), parent(parent) {}
+
+    int f() const { return g + h; } // Total cost
+
+    bool operator>(const Node& other) const { return f() > other.f(); }
+};
+
+int heuristic(int x1, int y1, int x2, int y2) {
+    return abs(x1 - x2) + abs(y1 - y2); // Manhattan distance
+}
+
 int main()
 {
 
