@@ -19,6 +19,26 @@ const string PLAYER_COLOR = "\033[32m"; // Green
 const string END_COLOR = "\033[31m";    // Red
 const string PATH_COLOR = "\033[34m";   // Blue
 
+void printMaze(const vector<vector<char>>& maze) {
+    for (const auto& row : maze) {
+        for (const auto& cell : row) {
+            if (cell == 'P') {
+                cout << PLAYER_COLOR << cell << RESET << ' ';
+            }
+            else if (cell == 'E') {
+                cout << END_COLOR << cell << RESET << ' ';
+            }
+            else if (cell == '*') {
+                cout << PATH_COLOR << cell << RESET << ' ';
+            }
+            else {
+                cout << cell << ' ';
+            }
+        }
+        cout << endl;
+    }
+}
+
 int main()
 {
 
