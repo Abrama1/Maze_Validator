@@ -56,6 +56,43 @@ int heuristic(int x1, int y1, int x2, int y2) {
     return abs(x1 - x2) + abs(y1 - y2); // Manhattan distance
 }
 
+bool isValidMove(const vector<vector<char>>& maze, int x, int y) {
+    return x >= 0 && x < maze.size() && y >= 0 && y < maze[0].size() && maze[x][y] != '1';
+}
+
+bool solveMazeForValidation(vector<vector<char>>& maze, int startX, int startY, int endX, int endY) {
+    priority_queue<Node, vector<Node>, greater<Node>> openList;
+    vector<vector<bool>> visited(maze.size(), vector<bool>(maze[0].size(), false));
+
+    openList.emplace(startX, startY, 0, heuristic(startX, startY, endX, endY));
+
+    while (!openList.empty()) {
+        Node current = openList.top();
+        openList.pop();
+
+        // If the end is reached
+        if (current.x == endX && current.y == endY) {
+            return true; // Valid path exists
+        }
+
+        if (visited[current.x][current.y]) continue;
+        visited[current.x][current.y] = true;
+
+        // Generate neighbors
+        vector<pair<int, int>> directions = { {-1, 0}, {1, 0}, {0, -1}, {0, 1} };
+        for (const auto& [dx, dy] : directions) {
+            int newX = current.x + dx;
+            int newY = current.y + dy;
+
+            if (isValidMove(maze, newX, newY) && !visited[newX][newY]) {
+                openList.emplace(newX, newY, current.g + 1, heuristic(newX, newY, endX, endY), nullptr);
+            }
+        }
+    }
+
+    return false; // No valid path found
+}
+
 int main()
 {
 
